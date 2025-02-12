@@ -6,6 +6,7 @@
     <title>Document</title>
     <!-- <script src="./early_writings.csv"></script> -->
     <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+    <script src="script.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playfair:ital,opsz,wght@0,5..1200,300..900;1,5..1200,300..900&display=swap" rel="stylesheet">
@@ -34,63 +35,10 @@
     <h1>Some of the Oldest Writings in History</h1>
     
     <p>
-        Praesent placerat, magna in vehicula vestibulum, felis urna cursus lorem, sed vestibulum quam eros vel libero. Vivamus commodo, odio sed fringilla pretium, sem nulla feugiat odio, in cursus elit dolor et ex.
-        In hac habitasse platea dictumst. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Nam eu nunc non augue tincidunt suscipit. Suspendisse potenti. Aliquam erat volutpat. Integer vel turpis sed purus scelerisque euismod.
+        <!-- Praesent placerat, magna in vehicula vestibulum, felis urna cursus lorem, sed vestibulum quam eros vel libero. Vivamus commodo, odio sed fringilla pretium, sem nulla feugiat odio, in cursus elit dolor et ex.
+        In hac habitasse platea dictumst. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Nam eu nunc non augue tincidunt suscipit. Suspendisse potenti. Aliquam erat volutpat. Integer vel turpis sed purus scelerisque euismod. -->
     </p>
-    <script>
-        
-        d3.csv("./early_writings.csv").then(function(data){
-            console.log(data)
-            
-            // data is already sorted, so need to do this now:
-            // data.sort(function(a,b){
-            //     return a.date_estimate - b.date_estimate;
-            // });
 
-            // console.log(data)
-            // test
-                
-                var svg = d3.select("body").append("svg")
-                .attr("width",900)
-                .attr("height",900)
-                
-            //     var palette = {'Asia':"#a7ccc8", 'Africa':"#167c55", 'Europe':"#EEA49C", 'Oceania':"#7e8ecd", 'Americas':"#A4BDC4"}
-                
-                var allDates = data.map(function(row){ return +row.date_estimate})
-                console.log(allDates)
-                var timeScale = d3.scaleLinear(d3.extent(allDates), [20,880])
-                // console.log("timeScale(-3000): ", timeScale)
-                
-                var sightings = svg.selectAll("line")
-                .data(data)
-                .join("line")
-                .attr("x1",function(d){ 
-                    return timeScale(d.date_estimate)
-                })
-                .attr("x2",function(d){ 
-                    return timeScale(d.date_estimate) + 10
-                })
-                .attr("y1",function(d,i){return i*5 + 14})
-                .attr("y2",function(d,i){return i*5 + 14})
-                // .attr("stroke",function(d){return palette[d.geo]})
-                .attr("stroke",function(d){return "black"})
-                .attr("stroke-width",3)
-                .on("mouseover",function(e,d){console.log(d.name,d)})
-                
-                // white vertical line
-                svg.append("line")
-                .attr("x1",function(d){return timeScale(0)})
-                .attr("y1",0)
-                .attr("x2",function(d){return timeScale(0)})
-                .attr("y2",900)
-                .attr("stroke","white")
-                .attr("stroke-width","2")
-                .attr("stroke-dasharray","0 6")
-                .attr("stroke-linecap","round")
-
-            })
-        
-    </script>
 </body>
 </html>
 
