@@ -1,47 +1,15 @@
 
 
-const timelineWidth = 1350
-
-// d3.json('custom.geo.json').then(function(bb) {
-//     let projection = d3.geoEqualEarth();
-//     let width = 1350, height = 500;
-//     projection.fitSize([width, height], bb);
-//     let geoGenerator = d3.geoPath()
-//     .projection(projection)
-//     let svg = d3.select("body").append('svg')
-//     .style("width", width).style("height", height);
-//     svg.append('g').selectAll('path')
-//     .data(bb.features)
-//     .join('path')
-//     .attr('d', geoGenerator)
-//     .attr('fill', '#088')
-//     .attr('stroke', '#000');
-// });
-
-// d3.json('map.geojson').then(function(bb) {
-//     let projection = d3.geoEqualEarth();
-//     let width = 1350, height = 500;
-//     projection.fitSize([width, height], bb);
-//     let geoGenerator = d3.geoPath()
-//     .projection(projection)
-//     let svg = d3.select("body").append('svg')
-//     .style("width", width).style("height", height);
-//     svg.append('g').selectAll('path')
-//     .data(bb.features)
-//     .join('path')
-//     .attr('d', geoGenerator)
-//     .attr('fill', '#088')
-//     .attr('stroke', '#000');
-// });
+const timelineWidth = 1600
+var svgHeight = 500
+var imageWidth = 40
 
 // filter first, then svg
 var filters = d3.select("body")
     .append("div")
     .attr("id", "filters")
         
-        d3.csv("./early_writings.csv").then(function(data){
-            console.log(data)
-            
+        d3.csv("./early_writings.csv").then(function(data){            
             
             var checkBox = filters
                 .append("input")
@@ -59,17 +27,10 @@ var filters = d3.select("body")
                 
                 var svg = d3.select("body").append("svg")
                 .attr("width",timelineWidth)
-                .attr("height",100)
+                .attr("height",svgHeight + 50)
                 
             //     var palette = {'Asia':"#a7ccc8", 'Africa':"#167c55", 'Europe':"#EEA49C", 'Oceania':"#7e8ecd", 'Americas':"#A4BDC4"}
                 
-                var allDates = data.map(function(row){ return +row.date_estimate})
-                console.log(allDates)
-                var timeScale = d3.scaleLinear(d3.extent(allDates), [20,1300])
-                console.log('data.length: ', data.length)
-                // var xScale = d3.scaleLinear([0,data.length], [20,880])
-                // console.log("timeScale(-3000): ", timeScale)
-
                 var image_names = [
                     "assets/1_Kish_Tablet.png",
                     "assets/2_Narmer_Palette.jpeg",
@@ -83,14 +44,18 @@ var filters = d3.select("body")
                     "assets/8_Ox_Scapula_Oracle_Bone_by_Zhēng_爭.png",
                     "assets/9_Bronze_Fāng_Zūn_Ritual_Wine_Container.png",
                     "assets/Dipylon_Inscription.JPG",
+                    "assets/Edicts_of_Ashoka.jpg",
                     "assets/Glyph_Block_8_from_San_Bartolo.jpeg",
+                    "assets/Mawangdui_Silk_Text_Tao_Te_Ching.jpeg",
                     "assets/Rosetta_Stone.jpeg",
                     "assets/10_Great_Psalms_Scroll.png",
                     "assets/11_ Gandhāran_Buddhist_Birchbark_Scroll.jpg",
                     "assets/Svingerud_Runestone.jpg",
+                    "assets/Pi_Yu_Jing.jpg",
                     "assets/Diamond_Sutra_from_Tang_dynasty.jpg",
                     "assets/Missal_of_Silos.jpg",
-                    "assets/Jikji_pages.jpg"
+                    "assets/Jikji_pages.jpg",
+                    "assets/Gutenberg_Bible.jpg"
                 ]
 
                 var icon_names = [
@@ -106,31 +71,65 @@ var filters = d3.select("body")
                     "icons/8_Ox_Scapula_Oracle_Bone_by_Zhēng_爭.jpeg",
                     "icons/9_Bronze_Fāng_Zūn_Ritual_Wine_Container.jpeg",
                     "icons/Dipylon_Inscription.JPG",
+                    "icons/Edicts_of_Ashoka.jpg",
                     "icons/Glyph_Block_8_from_San_Bartolo.jpeg",
+                    "icons/Mawangdui_Silk_Text_Tao_Te_Ching.jpeg",
                     "icons/Rosetta_Stone.jpeg",
                     "icons/10_Great_Psalms_Scroll.jpeg",
                     "icons/11_ Gandhāran_Buddhist_Birchbark_Scroll.jpg",
                     "icons/Svingerud_Runestone.jpg",
+                    "icons/Pi_Yu_Jing.jpg",
                     "icons/Diamond_Sutra_from_Tang_dynasty.jpg",
                     "icons/Missal_of_Silos.jpg",
-                    "icons/Jikji_pages.jpg"
+                    "icons/Jikji_pages.jpg",
+                    "icons/Gutenberg_Bible.jpg"
                 ]
-                
 
-                // svg.selectAll("defs")
-                // .join("defs")
-                // .attr()
-                var width = 80
+                var allDates = data.map(function(row){ return +row.date_estimate})
+                var timeScale = d3.scaleLinear(d3.extent(allDates), [50,timelineWidth - imageWidth - 40])
+                console.log('data.length: ', data.length)
+
+                // FILTER TIME for y axis ~_~
+                // get array of media materials
+                materials = data.map(d=>d.media_material)
+                // only get the unique items
+                materials = materials.filter((material,index,array) => array.indexOf(material) == index)
+                // turn array into object
+                let materialToY = {}
+                var yHeight = Math.floor((svgHeight / materials.length))
+
+                for (let i = 0; i < materials.length; ++i) {
+                    materialToY[materials[i]] = yHeight * i;
+                }
+
+                // FILTER TIME for x axis (time)
+                let first_year =-3200
+                let last_year = 1200
+                let num_years = Math.abs(first_year - last_year)
+                let year_sub_range = Math.floor(num_years / 10)
+                let year_full_range = [first_year,last_year]
+                var years_array = []
+                let yearToX = {}
+                for (let i = -3200; i <= 1200; i+=year_sub_range) {
+                    years_array.push(i)
+                }
+                console.log("years_array: ", years_array)
+                console.log("timeScale(years_array[1]): ", timeScale(years_array[2]))
+
+
                 var sightings = svg.selectAll("image")
-                .data(data)
-                .join('svg:image')
-                .attr("xlink:href", (d,i) => icon_names[i])
-                .attr("width", width)
-                .attr("height", width)
-                .attr("x",function(d){ 
-                    return timeScale(d.date_estimate) - 20
-                })
-                .attr("y",0)
+                    .data(data)
+                    .join('svg:image')
+                    .attr("xlink:href", (d,i) => icon_names[i])
+                    .attr("width", imageWidth)
+                    .attr("height", imageWidth)
+                    .attr("x",function(d){ 
+                        return timeScale(d.date_estimate) + 40
+                    })
+                // .attr("y",(d,i) => (svgHeight - (yHeight * i)))
+                .attr("y",(d) => svgHeight - (materialToY[d.media_material]) - (imageWidth))
+
+                // HOVER EFFECTS
                 .on('mouseover', function(e,d){
                     console.log(d.name,d)
                     d3.select("body").append("div")
@@ -157,6 +156,22 @@ var filters = d3.select("body")
                     d3.select("div").remove()
                     d3.select(this).attr("stroke", "black")
                 })
+
+                // ROW LABELS (MATERIAL)
+                svg.selectAll(".row_label")
+                    .data(data)
+                    .join("text")
+                    .text(d => d.media_material)
+                    .attr('x',20)
+                    .attr('y',(d)=>svgHeight - (materialToY[d.media_material]) - (imageWidth/2))
+
+                // // COLUMN LABELS (TIME)
+                svg.selectAll(".time_label")
+                    .data(data)
+                    .join("text")
+                    .text((d,i) => years_array[i])
+                    .attr('x',(d,i) => timeScale(years_array[i]) + 40)
+                    .attr('y',svgHeight + 40)
 
                 // var imageIcons = svg.append('svg:image')
                 // .attr("xlink:href", "./assets/1_Kish_tablet.png")
