@@ -1,3 +1,35 @@
+// Get the modal
+var modal = document.getElementById("myModal");
+
+// Get the button that opens the modal
+var btn = document.getElementById("myBtn");
+
+// Get the <span> element that closes the modal
+var span = document.getElementsByClassName("close")[0];
+
+console.log('btn:',btn)
+// When the user clicks on the button, open the modal
+btn.onclick = function() {
+  modal.style.display = "block";
+}
+
+// When the user clicks on <span> (x), close the modal
+span.onclick = function() {
+  modal.style.display = "none";
+}
+
+// When the user clicks anywhere outside of the modal, close it
+window.onclick = function(event) {
+  if (event.target == modal) {
+    modal.style.display = "none";
+  }
+}
+
+
+
+
+
+
 
 
 const timelineWidth = 1600
@@ -12,9 +44,6 @@ var filters = d3.select("body")
         d3.csv("./early_writings.csv").then(function(data){
             
             var yFilterColumns = ["empire_or_republic","found_region_modern_large","current_country","distance_from_origin(km)","writing_material","media_material","form","script_type","script_direction","subject_topic"]
-            // var yFilters = data.filter(d => yFilterColumns.includes(d.co))
-            // var yFilters = data.columns.filter(d=> yFilterColumns.includes(d))
-            // console.log('yFilters:', yFilters)
 
             d3.select("body")
             .selectAll("button")
@@ -25,108 +54,45 @@ var filters = d3.select("body")
                 console.log(col)
                 
                 // updateYLabel("media_material")
-                updateYLabel("script_type")
+                updateYLabel(`${col}`)
                 
                 svg.selectAll("circle")
                     .transition()
                     .attr("r", function(d) {return d[col] * 20})
-
-
             })
-            
-            var checkBox = filters
-                .append("input")
-                .attr("type", "checkbox")
-                // .attr("min", extFat[0])
-                // .attr("max", extFat[1])
-                .on("input", e => {
-                    let fatLimit = e.target.value
-                    console.log(fatLimit)
-                    // fat needs to be smaller than fatLimit
-                    let filteredData = data.filter(d=>+d.Fat <= fatLimit)
-                    console.log(filteredData)
-                    updateChart(filteredData)
-                })
-                
+                            
                 var svg = d3.select("body").append("svg")
                 .attr("width",timelineWidth)
                 .attr("height",svgHeight + 50)
             
 
-                var image_names = [
-                    "assets/1_Kish_Tablet.png",
-                    "assets/2_Narmer_Palette.jpeg",
-                    "assets/4_Diary_of_Merer.png",
-                    "assets/3_Palermo_Stone.png",
-                    "assets/5_Istanbul_2461.jpeg",
-                    "assets/Code_of_Hammurabi.png",
-                    "assets/6_Complaint_tablet_to_Ea-nāṣir.png",
-                    "assets/Gilgamesh_Dream_Tablet.jpg",
-                    "assets/7_Akkadian_Cuneiform_in_Jerusalem.png",
-                    "assets/Vedas_palm_leaf_manuscript.jpg",
-                    "assets/8_Ox_Scapula_Oracle_Bone_by_Zhēng_爭.png",
-                    "assets/9_Bronze_Fāng_Zūn_Ritual_Wine_Container.png",
-                    "assets/Dipylon_Inscription.JPG",
-                    "assets/Edicts_of_Ashoka.jpg",
-                    "assets/Glyph_Block_8_from_San_Bartolo.jpeg",
-                    "assets/Mawangdui_Silk_Text_Tao_Te_Ching.jpeg",
-                    "assets/Rosetta_Stone.jpeg",
-                    "assets/10_Great_Psalms_Scroll.png",
-                    "assets/11_ Gandhāran_Buddhist_Birchbark_Scroll.jpg",
-                    "assets/Svingerud_Runestone.jpg",
-                    "assets/Pi_Yu_Jing.jpg",
-                    "assets/Diamond_Sutra_from_Tang_dynasty.jpg",
-                    "assets/Missal_of_Silos.jpg",
-                    "assets/Birch_Bark_Letter_No_202.jpg",
-                    "assets/Jikji_pages.jpg",
-                    "assets/Gutenberg_Bible.jpg"
-                ]
-
-                var icon_names = [
-                    "icons/1_Kish_Tablet.png",
-                    "icons/2_Narmer_Palette.jpeg",
-                    "icons/4_Diary_of_Merer.jpeg",
-                    "icons/3_Palermo_Stone.jpeg",
-                    "icons/5_Istanbul_2461.jpeg",
-                    "icons/Code_of_Hammurabi.png",
-                    "icons/6_Complaint_tablet_to_Ea-nāṣir.jpeg",
-                    "icons/Gilgamesh_Dream_Tablet.jpg",
-                    "icons/7_Akkadian_Cuneiform_in_Jerusalem.jpeg",
-                    "icons/Vedas_palm_leaf_manuscript.jpg",
-                    "icons/8_Ox_Scapula_Oracle_Bone_by_Zhēng_爭.jpeg",
-                    "icons/9_Bronze_Fāng_Zūn_Ritual_Wine_Container.jpeg",
-                    "icons/Dipylon_Inscription.JPG",
-                    "icons/Edicts_of_Ashoka.jpg",
-                    "icons/Glyph_Block_8_from_San_Bartolo.jpeg",
-                    "icons/Mawangdui_Silk_Text_Tao_Te_Ching.jpeg",
-                    "icons/Rosetta_Stone.jpeg",
-                    "icons/10_Great_Psalms_Scroll.jpeg",
-                    "icons/11_ Gandhāran_Buddhist_Birchbark_Scroll.jpg",
-                    "icons/Svingerud_Runestone.jpg",
-                    "icons/Pi_Yu_Jing.jpg",
-                    "icons/Diamond_Sutra_from_Tang_dynasty.jpg",
-                    "icons/Missal_of_Silos.jpg",
-                    "icons/Birch_Bark_Letter_No_202.jpg",
-                    "icons/Jikji_pages.jpg",
-                    "icons/Gutenberg_Bible.jpg"
-                ]
-
                 var allDates = data.map(function(row){ return +row.date_estimate})
                 var timeScale = d3.scaleLinear(d3.extent(allDates), [50,timelineWidth - imageWidth - 40])
                 console.log('data.length: ', data.length)
 
-                // FILTER TIME for y axis ~_~
-                // get array of media materials
-                materials = data.map(d=>d.media_material)
-                // only get the unique items
-                materials = materials.filter((material,index,array) => array.indexOf(material) == index)
-                // turn array into object
-                let materialToY = {}
-                var yHeight = Math.floor((svgHeight / materials.length))
+                let materialToY = createFilterObject("media_material")
+                let empireToY = createFilterObject("empire_or_republic")
+                let scriptToY = createFilterObject("script_type")
+                let currentCountryToY = createFilterObject("current_country")
+                let distanceFromOriginToY = createFilterObject("distance_from_origin(km)")
+                let foundRegionToY = createFilterObject("found_region_modern_large")
 
-                for (let i = 0; i < materials.length; ++i) {
-                    materialToY[materials[i]] = yHeight * i;
+                function createFilterObject(col) {
+                    // FILTER - y axis
+                    colArr = data.map(d=>d[col])
+
+                    // only get the unique items
+                    colArr = colArr.filter((element,index,array) => array.indexOf(element) == index)
+                    // turn array into object
+                    let test = {}
+                    var yHeight = Math.floor((svgHeight / colArr.length))
+
+                    for (let i = 0; i < colArr.length; i++) {
+                        test[colArr[i]] = yHeight * i;
+                    }
+                    return test
                 }
+
 
                 // FILTER TIME for x axis (time)
                 let first_year =-3200
@@ -142,58 +108,84 @@ var filters = d3.select("body")
                 console.log("years_array: ", years_array)
                 console.log("timeScale(years_array[1]): ", timeScale(years_array[2]))
 
-
-                var sightings = svg.selectAll("image")
-                    .data(data)
-                    .join('svg:image')
-                    .attr("xlink:href", (d,i) => icon_names[i])
-                    .attr("width", imageWidth)
-                    .attr("height", imageWidth)
-                    .attr("x",function(d){ 
-                        return timeScale(d.date_estimate) + 40
-                    })
-                // .attr("y",(d,i) => (svgHeight - (yHeight * i)))
-                .attr("y",(d) => svgHeight - (materialToY[d.media_material]) - (imageWidth))
-
-                // HOVER EFFECTS
-                .on('mouseover', function(e,d){
-                    console.log(d.name,d)
-                    d3.select("body").append("div")
-                        .attr('pointer-events', 'none')
-                        .attr("class", "tooltip")
-                        .style("opacity", 1)
-                        .html(
-                            `<img src='${image_names[data.indexOf(d)]}' height='400'/>` + "<br/>"
-                            + d.name + "<br/>" + d.date + "<br/>"  + d.empire_or_republic 
-                            + "<br/>" + d.period + "<br/>" + d.found_region_origin 
-                            + "<br/>" + "<br/>" + d.description + "<br/>"
-                            )
-                        .style("left", (d.x + 50 + "px"))
-                        .style("top", (d.y +"px"))
-                        .style("width", timelineWidth)
-                        // .attr('x',xScale(data.indexOf(d)))
-                        .attr('x',timeScale(d.date_estimate))
-                        .attr('y',100)
-                    console.log(this)
-                    // console.log('index: ', xScale(data.indexOf(d)))
-                    d3.select(this).attr("stroke", "pink")
-                })
-                .on('mouseout', function(e,d,){
-                    d3.select("div").remove()
-                    d3.select(this).attr("stroke", "black")
-                })
+                const rowNameToObject = {
+                    'media_material': materialToY,
+                    'empire_or_republic': empireToY,
+                    'script_type': scriptToY,
+                    'current_country': currentCountryToY,
+                    'distance_from_origin(km)': distanceFromOriginToY,
+                    'found_region_modern_large': foundRegionToY,
+                }
+               
 
                 // ROW LABELS (MATERIAL)
                 function updateYLabel(filter) {
+                    var obj = rowNameToObject[filter]
+                    console.log('obj: ', obj)
+
+                    var sightings = svg.selectAll("image")
+                        .data(data)
+                        .join('svg:image')
+                        .attr("xlink:href", (d,i) => icon_names[i])
+                        .attr("width", imageWidth)
+                        .attr("height", imageWidth)
+                        .attr("x",function(d){ 
+                            return timeScale(d.date_estimate) + 40
+                        })
+                        .attr("y",(d) => svgHeight - (obj[d[filter]]) - (imageWidth))
+
+                    // HOVER EFFECTS
+                    .on('mouseover', function(e,d){
+                        console.log(d.name,d)
+                        d3.select("body").append("div")
+                            .attr('pointer-events', 'none')
+                            .attr("class", "tooltip")
+                            .style("opacity", 1)
+                            .html(
+                                `<img src='${image_names[data.indexOf(d)]}' height='400'/>` + "<br/>"
+                                + d.name + "<br/>" + d.date + "<br/>"  + d.empire_or_republic 
+                                + "<br/>" + d.period + "<br/>" + d.found_region_origin 
+                                + "<br/>" + "<br/>" + d.description + "<br/>"
+                                )
+                            .style("left", (d.x + 50 + "px"))
+                            .style("top", (d.y +"px"))
+                            .style("width", timelineWidth)
+                            // .attr('x',xScale(data.indexOf(d)))
+                            .attr('x',timeScale(d.date_estimate))
+                            .attr('y',100)
+                        console.log(this)
+                        // console.log('index: ', xScale(data.indexOf(d)))
+                        d3.select(this).attr("stroke", "pink")
+                    })
+                    .on('mouseout', function(e,d,){
+                        d3.select("div").remove()
+                        d3.select(this).attr("stroke", "black")
+                    })
+                    .on("click", function(e,col) {
+                        console.log('e:',e)
+                        console.log('col:', col)
+                        var preview = svg
+                            .append('g')
+                            .attr("class", "preview")
+                        preview
+                            .append('text')
+                            .text('test')
+                            .attr('x', 10)
+                            .attr('y', 10)
+
+                    })
+
                     svg.select(".row_label").remove()
 
-                    svg.selectAll(".row_label")
+                        svg.selectAll(".row_label")
                         .data(data)
                         .join("text")
                         .text(d => d[filter])
                         .attr('x',20)
-                        .attr('y',(d)=>svgHeight - (materialToY[d.media_material]) - (imageWidth/2))
+                        .attr('y',(d)=>svgHeight - (obj[d[filter]]) - (imageWidth/2))
                         .attr('class','row_label')
+
+                    
                 }
                 updateYLabel("media_material")
 
@@ -204,13 +196,6 @@ var filters = d3.select("body")
                     .text((d,i) => years_array[i])
                     .attr('x',(d,i) => timeScale(years_array[i]) + 40)
                     .attr('y',svgHeight + 40)
-
-                // var imageIcons = svg.append('svg:image')
-                // .attr("xlink:href", "./assets/1_Kish_tablet.png")
-                // .attr("width", 200)
-                // .attr("height", 200)
-                // .attr("x", 100)
-                // .attr("y",100);
                 
                 // white vertical line
                 svg.append("line")
