@@ -2,19 +2,20 @@
 var modal = document.getElementById("myModal");
 
 // Get the button that opens the modal
-var btn = document.getElementById("myBtn");
+// var btn = document.getElementById("myBtn");
 
 // Get the <span> element that closes the modal
 var span = document.getElementsByClassName("close")[0];
 
-console.log('btn:',btn)
+// console.log('btn:',btn)
 // When the user clicks on the button, open the modal
-btn.onclick = function() {
-    openModal()
-}
+// btn.onclick = function() {
+//     openModal()
+// }
 
 // When the user clicks on <span> (x), close the modal
 span.onclick = function() {
+    console.log('span clicked')
   modal.style.display = "none";
 }
 
@@ -29,8 +30,16 @@ function openModal() {
     console.log("openModal called!")
     modal.style.display = "block";
 
+
 }
 
+var closeModal = function() {
+    console.log("HELLO")
+    modal = document.getElementsByClassName("description")[0];
+    console.log('modal:',modal)
+    modal.style.display = "none";
+
+}
 
 
 
@@ -154,10 +163,7 @@ var filters = d3.select("body")
                     //     .attr("class", "info")
                     //     .style("opacity", 1)
                     //     .html(
-                    //         `<img src='${image_names[data.indexOf(d)]}' height='400'/>` + "<br/>"
-                    //         + d.name + "<br/>" + d.date + "<br/>"  + d.empire_or_republic 
-                    //         + "<br/>" + d.period + "<br/>" + d.found_region_origin 
-                    //         + "<br/>" + "<br/>" + d.description + "<br/>"
+                    //         <img src='${image_names[data.indexOf(d)]}' height='400'/> <br/> d.name <br/> d.date <br/>  d.empire_or_republic <br/> d.period <br/> d.found_region_origin <br/><br/> d.description <br/>
                     //         )
                     //     .style("left", (d.x + 50 + "px"))
                     //     .style("top", (d.y +"px"))
@@ -176,16 +182,14 @@ var filters = d3.select("body")
                         svg.select("foreignObject").remove()
                     })
                     .on("click", function(e,d) {
-                        console.log('e:',e)
-                        console.log('col:', d)
-                        // openModal()
 
-                        d3.select("body").append("div")
+
+                        var modalDiv = d3.select("body").append("div")
                             .attr('pointer-events', 'none')
                             .attr("class", "description")
                             .style("opacity", 1)
                             .html(
-                                `<div class='modal-content'><span class='close'>&times;</span><p><b>${d.name}</b> <br/> ${d.date} <br/> ${d.empire_or_republic} <br/> ${d.media_material2}</p></div>`
+                                `<div class='modal-content'><span class='close' onclick='closeModal()'>&times;</span><p><img src='${image_names[data.indexOf(d)]}' height='400'/> <br/> ${d.name} <br/> ${d.date} <br/>  ${d.empire_or_republic} <br/> ${d.period} <br/> ${d.found_region_origin} <br/><br/> ${d.description} <br/></p></div>`
                                 )
                             .style("left", (d.x + 50 + "px"))
                             .style("top", (d.y +"px"))
@@ -201,6 +205,10 @@ var filters = d3.select("body")
                         //     .style("font", "14px 'Helvetica Neue'")
                         //     .html(`<b>${d.name}</b> <br/> ${d.date} <br/> ${d.empire_or_republic} <br/> ${d.media_material2}`)
 
+                        d3.select("span")
+                            .on("click",function(e,d){
+                                console.log('test!')
+                        })
                     })
 
                 svg.select(".row_label").remove()
