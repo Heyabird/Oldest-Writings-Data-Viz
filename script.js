@@ -9,7 +9,30 @@ var filters = d3.select("body")
     .append("div")
     .attr("id", "filters")
         
-        d3.csv("./early_writings.csv").then(function(data){            
+        d3.csv("./early_writings.csv").then(function(data){
+            
+            var yFilterColumns = ["empire_or_republic","found_region_modern_large","current_country","distance_from_origin(km)","writing_material","media_material","form","script_type","script_direction","subject_topic"]
+            // var yFilters = data.filter(d => yFilterColumns.includes(d.co))
+            // var yFilters = data.columns.filter(d=> yFilterColumns.includes(d))
+            // console.log('yFilters:', yFilters)
+
+            d3.select("body")
+            .selectAll("button")
+            .data(yFilterColumns)
+            .join("button")
+            .text(d => d)
+            .on("click", function(e,col) {
+                console.log(col)
+                
+                // updateYLabel("media_material")
+                updateYLabel("script_type")
+                
+                svg.selectAll("circle")
+                    .transition()
+                    .attr("r", function(d) {return d[col] * 20})
+
+
+            })
             
             var checkBox = filters
                 .append("input")
@@ -28,9 +51,8 @@ var filters = d3.select("body")
                 var svg = d3.select("body").append("svg")
                 .attr("width",timelineWidth)
                 .attr("height",svgHeight + 50)
-                
-            //     var palette = {'Asia':"#a7ccc8", 'Africa':"#167c55", 'Europe':"#EEA49C", 'Oceania':"#7e8ecd", 'Americas':"#A4BDC4"}
-                
+            
+
                 var image_names = [
                     "assets/1_Kish_Tablet.png",
                     "assets/2_Narmer_Palette.jpeg",
@@ -41,6 +63,7 @@ var filters = d3.select("body")
                     "assets/6_Complaint_tablet_to_Ea-nāṣir.png",
                     "assets/Gilgamesh_Dream_Tablet.jpg",
                     "assets/7_Akkadian_Cuneiform_in_Jerusalem.png",
+                    "assets/Vedas_palm_leaf_manuscript.jpg",
                     "assets/8_Ox_Scapula_Oracle_Bone_by_Zhēng_爭.png",
                     "assets/9_Bronze_Fāng_Zūn_Ritual_Wine_Container.png",
                     "assets/Dipylon_Inscription.JPG",
@@ -54,6 +77,7 @@ var filters = d3.select("body")
                     "assets/Pi_Yu_Jing.jpg",
                     "assets/Diamond_Sutra_from_Tang_dynasty.jpg",
                     "assets/Missal_of_Silos.jpg",
+                    "assets/Birch_Bark_Letter_No_202.jpg",
                     "assets/Jikji_pages.jpg",
                     "assets/Gutenberg_Bible.jpg"
                 ]
@@ -68,6 +92,7 @@ var filters = d3.select("body")
                     "icons/6_Complaint_tablet_to_Ea-nāṣir.jpeg",
                     "icons/Gilgamesh_Dream_Tablet.jpg",
                     "icons/7_Akkadian_Cuneiform_in_Jerusalem.jpeg",
+                    "icons/Vedas_palm_leaf_manuscript.jpg",
                     "icons/8_Ox_Scapula_Oracle_Bone_by_Zhēng_爭.jpeg",
                     "icons/9_Bronze_Fāng_Zūn_Ritual_Wine_Container.jpeg",
                     "icons/Dipylon_Inscription.JPG",
@@ -81,6 +106,7 @@ var filters = d3.select("body")
                     "icons/Pi_Yu_Jing.jpg",
                     "icons/Diamond_Sutra_from_Tang_dynasty.jpg",
                     "icons/Missal_of_Silos.jpg",
+                    "icons/Birch_Bark_Letter_No_202.jpg",
                     "icons/Jikji_pages.jpg",
                     "icons/Gutenberg_Bible.jpg"
                 ]
@@ -138,7 +164,7 @@ var filters = d3.select("body")
                         .style("opacity", 1)
                         .html(
                             `<img src='${image_names[data.indexOf(d)]}' height='400'/>` + "<br/>"
-                            + d.name + "<br/>" + d.date + "<br/>"  + d.empire 
+                            + d.name + "<br/>" + d.date + "<br/>"  + d.empire_or_republic 
                             + "<br/>" + d.period + "<br/>" + d.found_region_origin 
                             + "<br/>" + "<br/>" + d.description + "<br/>"
                             )
@@ -158,12 +184,18 @@ var filters = d3.select("body")
                 })
 
                 // ROW LABELS (MATERIAL)
-                svg.selectAll(".row_label")
-                    .data(data)
-                    .join("text")
-                    .text(d => d.media_material)
-                    .attr('x',20)
-                    .attr('y',(d)=>svgHeight - (materialToY[d.media_material]) - (imageWidth/2))
+                function updateYLabel(filter) {
+                    svg.select(".row_label").remove()
+
+                    svg.selectAll(".row_label")
+                        .data(data)
+                        .join("text")
+                        .text(d => d[filter])
+                        .attr('x',20)
+                        .attr('y',(d)=>svgHeight - (materialToY[d.media_material]) - (imageWidth/2))
+                        .attr('class','row_label')
+                }
+                updateYLabel("media_material")
 
                 // // COLUMN LABELS (TIME)
                 svg.selectAll(".time_label")
@@ -182,9 +214,9 @@ var filters = d3.select("body")
                 
                 // white vertical line
                 svg.append("line")
-                .attr("x1",function(d){return timeScale(0)})
+                .attr("x1",function(d){return timeScale(150)})
                 .attr("y1",0)
-                .attr("x2",function(d){return timeScale(0)})
+                .attr("x2",function(d){return timeScale(150)})
                 .attr("y2",900)
                 .attr("stroke","white")
                 .attr("stroke-width","2")
