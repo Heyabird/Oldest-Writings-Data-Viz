@@ -14,25 +14,25 @@ var span = document.getElementsByClassName("close")[0];
 //     openModal()
 // }
 
-// When the user clicks on <span> (x), close the modal
-span.onclick = function() {
-    console.log('span clicked')
-  modal.style.display = "none";
-}
+// // When the user clicks on <span> (x), close the modal
+// span.onclick = function() {
+//     console.log('span clicked')
+//   modal.style.display = "none";
+// }
 
-// When the user clicks anywhere outside of the modal, close it
-window.onclick = function(event) {
-  if (event.target == modal) {
-    modal.style.display = "none";
-  }
-}
+// // When the user clicks anywhere outside of the modal, close it
+// window.onclick = function(event) {
+//   if (event.target == modal) {
+//     modal.style.display = "none";
+//   }
+// }
 
-function openModal() {
-    console.log("openModal called!")
-    modal.style.display = "block";
+// function openModal() {
+//     console.log("openModal called!")
+//     modal.style.display = "block";
 
 
-}
+// }
 
 var closeModal = function() {
     console.log("HELLO")
@@ -44,9 +44,7 @@ var closeModal = function() {
 
 
 
-
-
-const timelineWidth = 1500
+const timelineWidth = 1400
 var svgHeight = 670
 var imageWidth = 60
 
@@ -59,7 +57,9 @@ var filters = d3.select("body")
         d3.csv("./early_writings.csv").then(function(data){
             
             
-            var yFilterColumns = ["empire_or_republic","found_region_modern_large","found_region_modern","current_country","distance_from_origin_km",
+            var yFilterColumns = ["empire_or_republic","found_region_modern_large","found_region_modern",
+            // "current_country",
+            "distance_from_origin_km",
                 "writing_material",
                 "media_material",
                 "form",
@@ -196,6 +196,7 @@ var filters = d3.select("body")
             // ROW LABELS (Y)
             function updateYLabel(filter) {
                 var obj = rowNameToObject[filter]
+                let imageZoomWidth = 125
                 
                 // this one deals with number so we might have to do something about that
                 if(filter == "distance_from_origin_km") {
@@ -218,63 +219,50 @@ var filters = d3.select("body")
                     .attr('opacity', 0.5)
                     .attr('class','yLines')
 
-                if (filter == "none") {
-                    var timeline = svg.selectAll("image")
-                        .data(data)
-                        .join('svg:image')
-                        // .transition()
-                        .attr("xlink:href", (d,i) => icon_names[i])
-                        .attr("width", imageWidth)
-                        .attr("height", imageWidth)
-                        .attr("x",function(d){ 
-                            return timeScale(d.date_estimate) + 40
-                        })
-                        .attr("y",svgHeight/2)
-                        
-                }
-                else {
-                    var timeline = svg.selectAll("image")
-                        .data(data)
-                        .join('svg:image')
-                        .attr("xlink:href", (d,i) => icon_names[i])
-                        .attr("height", obj.yHeight)
-                        // .transition()
-                        .attr("width", obj.yHeight)
-                        .attr("x",function(d){ 
-                            console.log('obj : ', obj)
-                            return timeScale(d.date_estimate) + yHeight
-                        })
-                        .attr("y",(d) => svgHeight - (obj[d[filter]]) - (imageWidth))
-
-                        
-                }
-
+                
+                // combine
+                var timeline = svg.selectAll("image")
+                    .data(data)
+                    .join('svg:image')
+                    .attr("xlink:href", (d,i) => icon_names[i])
+                    // .transition()
+                    
 
                 // HOVER EFFECTS - show preview boxes!
-                    timeline.on('mouseover', function(e,d){
+                    .on('mouseover', function(e,d){
                         let moveRight
                         if (d.date_estimate < 0) {
-                            moveRight = 88
+                            moveRight = 170
                         } else {
-                            moveRight = -308
+                            moveRight = -255
                         }
                         svg.append("foreignObject")
-                        .attr("width", 350)
+                        .style('pointer-events','none')
+                        .attr("width", 300)
                         .attr("height", 500)
-                        .attr("x",filter == "none" ? timeScale(d.date_estimate) + 30 : timeScale(d.date_estimate) + moveRight)
-                        .attr("y",filter == "none" ? svgHeight/2 + (imageWidth) : svgHeight - (obj[d[filter]]) - (imageWidth) - 8) // HEYA
+                        .attr("x",filter == "none" ? timeScale(d.date_estimate) + 32 : timeScale(d.date_estimate) + moveRight)
+                        .attr("y",filter == "none" ? svgHeight/2 + imageZoomWidth : svgHeight - (obj[d[filter]]) - (imageZoomWidth) + 57) // HEYA
                         .append("xhtml:body")
                             .style("font", "12px 'Helvetica Neue'")
                             .style("padding","3px")
                             .style("background-color","#c98a4f")
-                            .html(`<b>${d.name}</b> (${d.date}) <br/> ${d.found_region_origin} → ${d.current_country} (distance: ${d.distance_from_origin_km}) <br/>topic: ${d.subject} // <i>${d.writing_material}</i> on <i>${d.media_material2}</i>`)
-                        d3.select(this).attr("stroke", "pink")
+                            .html(`<div><b>${d.name}</b> (${d.date})<br/><span class="previewKey">Found region</span>: ${d.found_region_origin} <br/><span class="previewKey">Current location</span>: ${d.current_city}, ${d.current_country} <br/><span class="previewKey">Distance from origin to current</span>: ${d.distance_from_origin_km} km <br/><span class="previewKey">Topic</span>: ${d.subject_topic} / ${d.subject}<br/><span class="previewKey">Medium</span>: <i>${d.writing_material}</i> on <i>${d.media_material2}</i></div>`)
+                        console.log('this:', this)
+
+                        d3.select(this).attr("height", imageZoomWidth)
+                            .attr("width", imageZoomWidth)
+                            .classed("top-layer", true)
+                            .raise()
+
                     })
                     .on('mouseout', function(e,d) {
                         d3.select("div").remove()
-                        d3.select(this).attr("stroke", "black")
                         svg.select('.preview').remove()
                         svg.select("foreignObject").remove()
+
+                        d3.select(this)
+                            .attr("height", filter == "none" ? imageWidth : obj.yHeight)
+                            .attr("width", filter == "none" ? imageWidth : obj.yHeight)
                     })
                     .on("click", function(e,d) {
                         console.log('on click e:', e)
@@ -283,7 +271,7 @@ var filters = d3.select("body")
                             .attr("class", "description")
                             .style("opacity", 1)
                             .html(
-                                `<div class='modal-content'><span class='close' onclick='closeModal()'>&times;</span><p><img style='max-width:800px;' src='${image_names[data.indexOf(d)]}' height='400'/> <br/> ${d.name} <br/> ${d.date} <br/>  ${d.empire_or_republic} <br/> ${d.period} <br/> ${d.found_region_origin} <br/><br/> ${d.description} <br/></p></div>`
+                                `<div class='modal-content'><span class='close' onclick='closeModal()'>&times;</span><div class='flex-container'><div class='modal-img-container'><img class='modal-image' src='${image_names[data.indexOf(d)]}' height='400'/></div> <p class="modal-text"> ${d.name} <br/> ${d.date} <br/>  ${d.empire_or_republic} <br/> ${d.period} <br/> ${d.found_region_origin} <br/><br/> ${d.description} <br/></p></div></div>`
                                 )
                             .style("left", (d.x + 50 + "px"))
                             .style("top", (d.y - 50 +"px"))
@@ -305,6 +293,15 @@ var filters = d3.select("body")
                                 console.log('test!')
                         })
                     })
+                    .transition()
+                    .attr("height", filter == "none" ? imageWidth : obj.yHeight)
+                    .attr("width", filter == "none" ? imageWidth : obj.yHeight)
+                    .attr("x",function(d){ 
+                        console.log('obj : ', obj)
+                        return filter == "none" ? timeScale(d.date_estimate) + 40 : timeScale(d.date_estimate) + yHeight
+                    })
+                    .attr("y",(d) => filter == "none" ? svgHeight/2 : svgHeight - (obj[d[filter]]) - (imageWidth))
+
 
                 svg.select(".row_label").remove()
 

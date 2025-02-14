@@ -3,7 +3,7 @@
 var image_names = [
     "assets/1_Kish_Tablet.png",
     "assets/2_Narmer_Palette.jpeg",
-    "assets/4_Diary_of_Merer.png",
+    "assets/4_Diary_of_Merer.jpeg",
     "assets/3_Palermo_Stone.png",
     "assets/5_Istanbul_2461.jpeg",
     "assets/Code_of_Hammurabi.png",
@@ -18,7 +18,7 @@ var image_names = [
     "assets/Glyph_Block_8_from_San_Bartolo.jpeg",
     "assets/Mawangdui_Silk_Text_Tao_Te_Ching.jpeg",
     "assets/Rosetta_Stone.jpeg",
-    "assets/10_Great_Psalms_Scroll.png",
+    "assets/10_Great_Psalms_Scroll.jpg",
     "assets/11_ Gandhāran_Buddhist_Birchbark_Scroll.jpg",
     "assets/Vindolanda_Tablet.jpg",
     "assets/Svingerud_Runestone.jpg",
