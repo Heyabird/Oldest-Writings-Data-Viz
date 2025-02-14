@@ -73,7 +73,7 @@ img {
     border: 1px solid #888;
     border-radius: 10px;
     width: 80%; /* Could be more or less, depending on screen size */
-    height: 50%;
+    height: 52%;
     overflow: scroll;
   }
   
