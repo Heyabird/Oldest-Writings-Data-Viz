@@ -45,9 +45,9 @@ var closeModal = function() {
 
 
 
-const timelineWidth = 1600
-var svgHeight = 500
-var imageWidth = 40
+const timelineWidth = 1500
+var svgHeight = 670
+var imageWidth = 50
 
 // filter first, then svg
 var filters = d3.select("body")
@@ -56,7 +56,14 @@ var filters = d3.select("body")
         
         d3.csv("./early_writings.csv").then(function(data){
             
-            var yFilterColumns = ["empire_or_republic","found_region_modern_large","current_country","distance_from_origin(km)","writing_material","media_material","form","script_type","script_direction","subject_topic"]
+            var yFilterColumns = ["empire_or_republic","found_region_modern_large","found_region_modern","current_country","distance_from_origin_km",
+            "writing_material",
+            "media_material",
+            "form",
+            "script_type",
+            "script_direction",
+            "subject_topic"
+        ]
 
             d3.select("body")
             .selectAll("button")
@@ -64,19 +71,40 @@ var filters = d3.select("body")
             .join("button")
             .text(d => d)
             .on("click", function(e,col) {
+
+                d3.selectAll("button").style("background-color", "#cccbcb")
                 console.log(col)
                 
                 // updateYLabel("media_material")
                 updateYLabel(`${col}`)
-                
-                svg.selectAll("circle")
-                    .transition()
-                    .attr("r", function(d) {return d[col] * 20})
+                console.log('this:', d3.select(this))
+                d3.select(this).style("background-color", "#c98a4f")
+                // svg.selectAll("circle")
+                //     .transition()
+                //     .attr("r", function(d) {return d[col] * 20})
             })
+
+
+            // var modalDiv = d3.select("body")
+            //     .append("div")
+            //     .data(data)
+            //     .attr('pointer-events', 'none')
+            //     .attr("class", "description")
+            //     .style("opacity", 1)
+            //     .html(
+            //         d=> `<div class='modal-content'><span class='close' onclick='closeModal()'>&times;</span><p><img style='max-width:800px;' src='${image_names[data.indexOf(d)]}' height='400'/> <br/> ${d.name} <br/> ${d.date} <br/>  ${d.empire_or_republic} <br/> ${d.period} <br/> ${d.found_region_origin} <br/><br/> ${d.description} <br/></p></div>`
+            //         )
+            //     .style("left", (d=> (d.x + 50 + "px")))
+            //     .style("top", (d=> (d.y +"px")))
+            //     //modal-making...
+            //     .classed('modal', true)
+            //     .style('display','none')
+
                             
             var svg = d3.select("body").append("svg")
             .attr("width",timelineWidth)
             .attr("height",svgHeight + 50)
+            // .style('margin','0 10')
         
 
             var allDates = data.map(function(row){ return +row.date_estimate})
@@ -87,15 +115,29 @@ var filters = d3.select("body")
             let empireToY = createFilterObject("empire_or_republic")
             let scriptToY = createFilterObject("script_type")
             let currentCountryToY = createFilterObject("current_country")
-            let distanceFromOriginToY = createFilterObject("distance_from_origin(km)")
+            let distanceFromOriginToY = createFilterObject("distance_from_origin_km",true)
+            let foundRegionModernToY = createFilterObject("found_region_modern")
             let foundRegionToY = createFilterObject("found_region_modern_large")
+            let scriptDirectionToY = createFilterObject("script_direction")
+            let subjectTopicToY = createFilterObject("subject_topic")
+            let writingMaterialToY = createFilterObject("writing_material")
+            let formToY = createFilterObject("form")
 
-            function createFilterObject(col) {
+            function createFilterObject(col, numbers = false) {
                 // FILTER - y axis
-                colArr = data.map(d=>d[col])
 
                 // only get the unique items
+
+                if (numbers === true) {
+                    colArr = data.map(d=>+d[col])
+                    colArr = colArr.sort(function(a, b) {
+                        return a - b;
+                    });
+                } else {
+                    colArr = data.map(d=>d[col])
+                }
                 colArr = colArr.filter((element,index,array) => array.indexOf(element) == index)
+
                 // turn array into object
                 let test = {}
                 var yHeight = Math.floor((svgHeight / colArr.length))
@@ -126,14 +168,26 @@ var filters = d3.select("body")
                 'empire_or_republic': empireToY,
                 'script_type': scriptToY,
                 'current_country': currentCountryToY,
-                'distance_from_origin(km)': distanceFromOriginToY,
+                'distance_from_origin_km': distanceFromOriginToY,
+                'found_region_modern': foundRegionModernToY,
                 'found_region_modern_large': foundRegionToY,
+                'script_direction': scriptDirectionToY,
+                'subject_topic': subjectTopicToY,
+                'writing_material': writingMaterialToY,
+                'form': formToY
             }
             
 
             // ROW LABELS (MATERIAL)
             function updateYLabel(filter) {
                 var obj = rowNameToObject[filter]
+                console.log('obj: ', obj)
+
+                if(filter == "distance_from_origin_km") {
+                    console.log('Hi')
+                    obj["unknown"] = obj["-10"]; 
+                    delete obj["-10"];  
+                }
                 console.log('obj: ', obj)
 
                 var sightings = svg.selectAll("image")
@@ -149,30 +203,22 @@ var filters = d3.select("body")
 
                 // HOVER EFFECTS
                     .on('mouseover', function(e,d){
+                        let moveRight
+                        if (d.date_estimate < 0) {
+                            moveRight = 88
+                        } else {
+                            moveRight = -308
+                        }
                         svg.append("foreignObject")
-                            .attr("width", 230)
-                            .attr("height", 500)
-                            .attr("x",timeScale(d.date_estimate) + 90)
-                            .attr("y",svgHeight - (obj[d[filter]]) - (imageWidth))
-                            .append("xhtml:body")
-                                .style("font", "14px 'Helvetica Neue'")
-                                .html(`<b>${d.name}</b> <br/> ${d.date} <br/> ${d.empire_or_republic} <br/> ${d.media_material2}`)
-                    
-                    // d3.select("body").append("div")
-                    //     .attr('pointer-events', 'none')
-                    //     .attr("class", "info")
-                    //     .style("opacity", 1)
-                    //     .html(
-                    //         <img src='${image_names[data.indexOf(d)]}' height='400'/> <br/> d.name <br/> d.date <br/>  d.empire_or_republic <br/> d.period <br/> d.found_region_origin <br/><br/> d.description <br/>
-                    //         )
-                    //     .style("left", (d.x + 50 + "px"))
-                    //     .style("top", (d.y +"px"))
-                    //     .style("width", timelineWidth)
-                    //     // .attr('x',xScale(data.indexOf(d)))
-                    //     .attr('x',timeScale(d.date_estimate))
-                    //     .attr('y',100)
-                        console.log(this)
-                        // console.log('index: ', xScale(data.indexOf(d)))
+                        .attr("width", 350)
+                        .attr("height", 500)
+                        .attr("x",timeScale(d.date_estimate) + moveRight)
+                        .attr("y",svgHeight - (obj[d[filter]]) - (imageWidth) - 8)
+                        .append("xhtml:body")
+                            .style("font", "14px 'Helvetica Neue'")
+                            .style("padding","3px")
+                            .style("background-color","#c98a4f")
+                            .html(`<b>${d.name}</b> (${d.date}) <br/> ${d.found_region_origin} → ${d.current_country} (distance: ${d.distance_from_origin_km}) <br/>topic: ${d.subject} // <i>${d.writing_material}</i> on <i>${d.media_material2}</i>`)
                         d3.select(this).attr("stroke", "pink")
                     })
                     .on('mouseout', function(e,d) {
@@ -182,20 +228,20 @@ var filters = d3.select("body")
                         svg.select("foreignObject").remove()
                     })
                     .on("click", function(e,d) {
-
-
+                        console.log('on click e:', e)
                         var modalDiv = d3.select("body").append("div")
                             .attr('pointer-events', 'none')
                             .attr("class", "description")
                             .style("opacity", 1)
                             .html(
-                                `<div class='modal-content'><span class='close' onclick='closeModal()'>&times;</span><p><img src='${image_names[data.indexOf(d)]}' height='400'/> <br/> ${d.name} <br/> ${d.date} <br/>  ${d.empire_or_republic} <br/> ${d.period} <br/> ${d.found_region_origin} <br/><br/> ${d.description} <br/></p></div>`
+                                `<div class='modal-content'><span class='close' onclick='closeModal()'>&times;</span><p><img style='max-width:800px;' src='${image_names[data.indexOf(d)]}' height='400'/> <br/> ${d.name} <br/> ${d.date} <br/>  ${d.empire_or_republic} <br/> ${d.period} <br/> ${d.found_region_origin} <br/><br/> ${d.description} <br/></p></div>`
                                 )
                             .style("left", (d.x + 50 + "px"))
-                            .style("top", (d.y +"px"))
+                            .style("top", (d.y - 50 +"px"))
                             //modal-making...
                             .classed('modal', true)
                             .style('display','block')
+                            console.log('on click d:', d)
 
                         //                         .attr("width", 230)
                         // .attr("height", 500)

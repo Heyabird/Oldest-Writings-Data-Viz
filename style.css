@@ -1,5 +1,39 @@
+body{
+    background-color: #f2f7f6; 
+    font-family: "Playfair", serif;
+    /* padding: 0 30px; */
+}
+#mainDiv {
+    padding-left: 30px;
+}
+svg {
+    /* padding-left: 30px; */
+}
+h1{
+    color:  #839a95;
+    /* padding-left: 30px; */
+}
+p{
+    width: 500px;
+    color: #57736d;
+}
+svg{
+    font-family: sans-serif;
+    background-color: #ece7e2;
+    /* background-color: #7e8ecd;   */
+    border-radius: 5px;
+}
 .description {
-    background-color: pink;
-    color: red;
+    /* background-color: pink; */
+    /* color: red; */
+}
+
+button {
+    margin: 0 10px 10px 0;
+    background-color: #cccbcb;
+    border: none;
+    padding: 6px;
+    cursor: pointer;
+    border-radius: 3px;
 }
 
