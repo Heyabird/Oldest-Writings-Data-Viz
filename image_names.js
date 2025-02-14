@@ -18,7 +18,7 @@ var image_names = [
     "assets/Glyph_Block_8_from_San_Bartolo.jpeg",
     "assets/Mawangdui_Silk_Text_Tao_Te_Ching.jpeg",
     "assets/Rosetta_Stone.jpeg",
-    "assets/10_Great_Psalms_Scroll.jpg",
+    "assets/Great_Psalms_Scroll_Page.jpg",
     "assets/11_ Gandhāran_Buddhist_Birchbark_Scroll.jpg",
     "assets/Vindolanda_Tablet.jpg",
     "assets/Svingerud_Runestone.jpg",

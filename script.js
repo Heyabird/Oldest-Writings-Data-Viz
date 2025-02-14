@@ -57,7 +57,8 @@ var filters = d3.select("body")
         d3.csv("./early_writings.csv").then(function(data){
             
             
-            var yFilterColumns = ["empire_or_republic","found_region_modern_large","found_region_modern",
+            var yFilterColumns = ["empire_or_republic","found_region_modern_large",
+            // "found_region_modern",
             // "current_country",
             "distance_from_origin_km",
                 "writing_material",
@@ -263,6 +264,7 @@ var filters = d3.select("body")
                         d3.select(this)
                             .attr("height", filter == "none" ? imageWidth : obj.yHeight)
                             .attr("width", filter == "none" ? imageWidth : obj.yHeight)
+                            .lower()
                     })
                     .on("click", function(e,d) {
                         console.log('on click e:', e)
