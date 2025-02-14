@@ -34,6 +34,8 @@ var span = document.getElementsByClassName("close")[0];
 
 // }
 
+var info = "<div id='info-box'><b>What defines a writing?</b><br/><br/>Writing systems typically satisfy three criteria. <br/><br/>First, the writing must have some purpose or meaning to it, and a point must be communicated by the text. <br/>Second, writing systems make use of specific symbols which may be recorded on some writing medium.<br/>Third, the symbols used in writing generally correspond to elements of spoken language. In general, systems of symbolic communication like signage, painting, maps, and mathematical notation are distinguished from writing systems, which require knowledge of an associated language to read a text.<br/><br/><br/><b>The origins of writing</b><br/><br/>Before the 20th century, most scholarly theories of the origins of writing involved some form of monogenesis, the assumption that writing had been invented only once as cuneiform in ancient Sumer, and spread across the world from there via cultural diffusion. According to these theories, writing was such a particular technology that exposure through activities like trade was a much more likely means of acquisition than independent reinvention. Specifically, many theories were dependent on a literal account of the Book of Genesis, including the emphases it placed on Mesopotamia.<br/><br/>Over time, greater awareness of the systems of pre-Columbian Mesoamerica conclusively established that writing had been independently invented multiple times. Four independent inventions of writing are most commonly recognized in <span class='underline'>Mesopotamia (c. 3400–3100 BC)</span>, <span class='underline'>Egypt (c. 3250 BC)</span>, <span class='underline'>China (before c. 1250 BC)</span>, and <span class='underline'>Mesoamerica (before c. 1 AD)</span>.<br/><br/>Source: https://en.wikipedia.org/wiki/History_of_writing</div>"
+
 var closeModal = function() {
     console.log("HELLO")
     modal = document.getElementsByClassName("description")[0];
@@ -108,6 +110,36 @@ var filters = d3.select("body")
  
                 })
 
+                d3.select("body")
+                    .append("button")
+                    .attr('id',"infoButton")
+                    .data(info)
+                    .text("info")
+                    .style("background-color", "white")
+                    // .style("stroke", "1px black")
+                    // .style("stroke", "1px")
+                    .style("position","fixed")
+                    .style("right","20px")
+                    .style("text-decoration","underline")
+                    .on("mouseover", function(e,col) {
+                        svg.append("foreignObject")
+                        .style('pointer-events','none')
+                        .attr("width", 800)
+                        .attr("height", 440)
+                        .attr("x",timelineWidth - 800)
+                        .attr("y",0) // HEYA
+                        .append("xhtml:div")
+                            .style("font", "12px 'Helvetica Neue'")
+                            .style("padding","13px")
+                            .style("background-color","white")
+                            .style("height","800px")
+                            .style("stroke","black")
+                            // .style("width","800px")
+                            .html(`${info}`)
+                    })
+                    .on("mouseout", function(e,col) {
+                        svg.selectAll("foreignObject").remove()
+                    })
 
                             
             var svg = d3.select("body").append("svg")
@@ -247,7 +279,7 @@ var filters = d3.select("body")
                             .style("font", "12px 'Helvetica Neue'")
                             .style("padding","3px")
                             .style("background-color","#c98a4f")
-                            .html(`<div><b>${d.name}</b> (${d.date})<br/><span class="previewKey">Found region</span>: ${d.found_region_origin} <br/><span class="previewKey">Current location</span>: ${d.current_city}, ${d.current_country} <br/><span class="previewKey">Distance from origin to current</span>: ${d.distance_from_origin_km} km <br/><span class="previewKey">Topic</span>: ${d.subject_topic} / ${d.subject}<br/><span class="previewKey">Medium</span>: <i>${d.writing_material}</i> on <i>${d.media_material2}</i></div>`)
+                            .html(`<div><b>${d.name}</b> (${d.date})<br/><span class="underline">Found region</span>: ${d.found_region_origin} <br/><span class="underline">Current location</span>: ${d.current_city}, ${d.current_country} <br/><span class="underline">Distance from origin to current</span>: ${d.distance_from_origin_km} km <br/><span class="underline">Topic</span>: ${d.subject_topic} / ${d.subject}<br/><span class="underline">Medium</span>: <i>${d.writing_material}</i> on <i>${d.media_material2}</i></div>`)
                         console.log('this:', this)
 
                         d3.select(this).attr("height", imageZoomWidth)

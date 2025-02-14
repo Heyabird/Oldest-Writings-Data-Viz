@@ -7,6 +7,15 @@ body{
 #mainDiv {
     padding-left: 30px;
 }
+
+#infoButton {
+    stroke: 'black';
+}
+
+#info-box {
+    font-size: 14px;
+}
+
 svg {
     /* padding-left: 30px; */
 }
@@ -116,7 +125,7 @@ button {
     font-size: 13px;
 }
 
-.previewKey {
+.underline {
     text-decoration: underline;
 }
 
