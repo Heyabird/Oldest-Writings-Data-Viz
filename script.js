@@ -62,27 +62,46 @@ var filters = d3.select("body")
             "form",
             "script_type",
             "script_direction",
-            "subject_topic"
+            "subject_topic",
+            // "none"
         ]
 
             d3.select("body")
-            .selectAll("button")
-            .data(yFilterColumns)
-            .join("button")
-            .text(d => d)
-            .on("click", function(e,col) {
+                .selectAll("button")
+                .data(yFilterColumns)
+                .join("button")
+                .text(d => d)
+                .on("click", function(e,col) {
 
-                d3.selectAll("button").style("background-color", "#cccbcb")
-                console.log(col)
-                
-                // updateYLabel("media_material")
-                updateYLabel(`${col}`)
-                console.log('this:', d3.select(this))
-                d3.select(this).style("background-color", "#c98a4f")
-                // svg.selectAll("circle")
-                //     .transition()
-                //     .attr("r", function(d) {return d[col] * 20})
-            })
+                    d3.selectAll("button")
+                    .style("background-color", "#cccbcb")
+                    console.log(col)
+                    
+                    // updateYLabel("media_material")
+                    updateYLabel(`${col}`)
+                    console.log('this:', d3.select(this))
+                    d3.select(this)
+                        .transition()
+                        .style("background-color", "#c98a4f")
+                })
+
+            d3.select("body")
+                .append("button")
+                .attr('id',"noneButton")
+                .data(["none"])
+                .join("button")
+                .text("none")
+                .style("background-color", "#c98a4f")
+                .on("click", function(e,col) {
+                    d3.selectAll("button")
+                    .style("background-color", "#cccbcb")
+                    
+                    updateYLabel(`${col}`)
+                    d3.select(this)
+                        .transition()
+                        .style("background-color", "#c98a4f")
+ 
+                })
 
 
             // var modalDiv = d3.select("body")
@@ -174,7 +193,8 @@ var filters = d3.select("body")
                 'script_direction': scriptDirectionToY,
                 'subject_topic': subjectTopicToY,
                 'writing_material': writingMaterialToY,
-                'form': formToY
+                'form': formToY,
+                'none':{}
             }
             
 
@@ -183,26 +203,39 @@ var filters = d3.select("body")
                 var obj = rowNameToObject[filter]
                 console.log('obj: ', obj)
 
+                // this one deals with number so we might have to do something about that
                 if(filter == "distance_from_origin_km") {
                     console.log('Hi')
                     obj["unknown"] = obj["-10"]; 
                     delete obj["-10"];  
                 }
-                console.log('obj: ', obj)
 
-                var sightings = svg.selectAll("image")
-                    .data(data)
-                    .join('svg:image')
-                    .attr("xlink:href", (d,i) => icon_names[i])
-                    .attr("width", imageWidth)
-                    .attr("height", imageWidth)
-                    .attr("x",function(d){ 
-                        return timeScale(d.date_estimate) + 40
-                    })
-                    .attr("y",(d) => svgHeight - (obj[d[filter]]) - (imageWidth))
-
+                if (filter == "none") {
+                    var timeline = svg.selectAll("image")
+                        .data(data)
+                        .join('svg:image')
+                        .attr("xlink:href", (d,i) => icon_names[i])
+                        .attr("width", imageWidth)
+                        .attr("height", imageWidth)
+                        .attr("x",function(d){ 
+                            return timeScale(d.date_estimate) + 40
+                        })
+                        .attr("y",svgHeight/2)
+                }
+                else {
+                    var timeline = svg.selectAll("image")
+                        .data(data)
+                        .join('svg:image')
+                        .attr("xlink:href", (d,i) => icon_names[i])
+                        .attr("width", imageWidth)
+                        .attr("height", imageWidth)
+                        .attr("x",function(d){ 
+                            return timeScale(d.date_estimate) + 40
+                        })
+                        .attr("y",(d) => svgHeight - (obj[d[filter]]) - (imageWidth))
+                }
                 // HOVER EFFECTS
-                    .on('mouseover', function(e,d){
+                    timeline.on('mouseover', function(e,d){
                         let moveRight
                         if (d.date_estimate < 0) {
                             moveRight = 88
@@ -212,10 +245,10 @@ var filters = d3.select("body")
                         svg.append("foreignObject")
                         .attr("width", 350)
                         .attr("height", 500)
-                        .attr("x",timeScale(d.date_estimate) + moveRight)
-                        .attr("y",svgHeight - (obj[d[filter]]) - (imageWidth) - 8)
+                        .attr("x",filter == "none" ? timeScale(d.date_estimate) + 30 : timeScale(d.date_estimate) + moveRight)
+                        .attr("y",filter == "none" ? svgHeight/2 + (imageWidth) : svgHeight - (obj[d[filter]]) - (imageWidth) - 8)
                         .append("xhtml:body")
-                            .style("font", "14px 'Helvetica Neue'")
+                            .style("font", "12px 'Helvetica Neue'")
                             .style("padding","3px")
                             .style("background-color","#c98a4f")
                             .html(`<b>${d.name}</b> (${d.date}) <br/> ${d.found_region_origin} → ${d.current_country} (distance: ${d.distance_from_origin_km}) <br/>topic: ${d.subject} // <i>${d.writing_material}</i> on <i>${d.media_material2}</i>`)
@@ -269,7 +302,7 @@ var filters = d3.select("body")
 
                 
             }
-            updateYLabel("media_material")
+            updateYLabel("none")
 
             // // COLUMN LABELS (TIME)
             svg.selectAll(".time_label")
