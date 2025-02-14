@@ -1,6 +1,7 @@
 // Get the modal
 var modal = document.getElementById("myModal");
 
+
 // Get the button that opens the modal
 // var btn = document.getElementById("myBtn");
 
@@ -47,28 +48,27 @@ var closeModal = function() {
 
 const timelineWidth = 1500
 var svgHeight = 670
-var imageWidth = 50
+var imageWidth = 60
 
 // filter first, then svg
 var filters = d3.select("body")
     .append("div")
     .attr("id", "filters")
+    
         
         d3.csv("./early_writings.csv").then(function(data){
             
+            
             var yFilterColumns = ["empire_or_republic","found_region_modern_large","found_region_modern","current_country","distance_from_origin_km",
-            "writing_material",
-            "media_material",
-            "form",
-            "script_type",
-            "script_direction",
-            "subject_topic",
-            // "none"
-        ]
+                "writing_material",
+                "media_material",
+                "form",
+                "script_type",
+                "script_direction",
+                "subject_topic",
+                // "none"
+            ]
 
-        // d3.select("body")
-        //     .append("span")
-        //     .text("Filters: ")
 
             d3.select("body")
                 .selectAll("button")
@@ -83,7 +83,7 @@ var filters = d3.select("body")
                     
                     // updateYLabel("media_material")
                     updateYLabel(`${col}`)
-                    console.log('this:', d3.select(this))
+
                     d3.select(this)
                         .transition()
                         .style("background-color", "#c98a4f")
@@ -108,31 +108,19 @@ var filters = d3.select("body")
                 })
 
 
-            // var modalDiv = d3.select("body")
-            //     .append("div")
-            //     .data(data)
-            //     .attr('pointer-events', 'none')
-            //     .attr("class", "description")
-            //     .style("opacity", 1)
-            //     .html(
-            //         d=> `<div class='modal-content'><span class='close' onclick='closeModal()'>&times;</span><p><img style='max-width:800px;' src='${image_names[data.indexOf(d)]}' height='400'/> <br/> ${d.name} <br/> ${d.date} <br/>  ${d.empire_or_republic} <br/> ${d.period} <br/> ${d.found_region_origin} <br/><br/> ${d.description} <br/></p></div>`
-            //         )
-            //     .style("left", (d=> (d.x + 50 + "px")))
-            //     .style("top", (d=> (d.y +"px")))
-            //     //modal-making...
-            //     .classed('modal', true)
-            //     .style('display','none')
-
                             
             var svg = d3.select("body").append("svg")
             .attr("width",timelineWidth)
             .attr("height",svgHeight + 50)
             // .style('margin','0 10')
+            
         
 
             var allDates = data.map(function(row){ return +row.date_estimate})
             var timeScale = d3.scaleLinear(d3.extent(allDates), [50,timelineWidth - imageWidth - 40])
             console.log('data.length: ', data.length)
+
+
 
             let materialToY = createFilterObject("media_material")
             let empireToY = createFilterObject("empire_or_republic")
@@ -145,6 +133,7 @@ var filters = d3.select("body")
             let subjectTopicToY = createFilterObject("subject_topic")
             let writingMaterialToY = createFilterObject("writing_material")
             let formToY = createFilterObject("form")
+            var yHeight
 
             function createFilterObject(col, numbers = false) {
                 // FILTER - y axis
@@ -162,13 +151,14 @@ var filters = d3.select("body")
                 colArr = colArr.filter((element,index,array) => array.indexOf(element) == index)
 
                 // turn array into object
-                let test = {}
-                var yHeight = Math.floor((svgHeight / colArr.length))
+                let obj = {}
+                yHeight = Math.floor((svgHeight / colArr.length))
 
                 for (let i = 0; i < colArr.length; i++) {
-                    test[colArr[i]] = yHeight * i;
+                    obj[colArr[i]] = yHeight * i;
                 }
-                return test
+                obj['yHeight'] = yHeight
+                return obj
             }
 
 
@@ -200,13 +190,13 @@ var filters = d3.select("body")
                 'form': formToY,
                 'none':{}
             }
+
             
 
-            // ROW LABELS (MATERIAL)
+            // ROW LABELS (Y)
             function updateYLabel(filter) {
                 var obj = rowNameToObject[filter]
-                console.log('obj: ', obj)
-
+                
                 // this one deals with number so we might have to do something about that
                 if(filter == "distance_from_origin_km") {
                     console.log('Hi')
@@ -214,10 +204,25 @@ var filters = d3.select("body")
                     delete obj["-10"];  
                 }
 
+                svg
+                    .selectAll(".yLines")
+                    .data(data)
+                    .join('line')
+                    .attr('x1', 0)
+                    // .attr('y', 0)
+                    .attr('y1',(d) => svgHeight - (obj[d[filter]]) - (imageWidth))
+                    .attr('x2', timelineWidth)
+                    .attr('y2', (d) => svgHeight - (obj[d[filter]]) - (imageWidth))
+                    .attr("fill", "white")
+                    .attr('stroke', '#a7afdb')
+                    .attr('opacity', 0.5)
+                    .attr('class','yLines')
+
                 if (filter == "none") {
                     var timeline = svg.selectAll("image")
                         .data(data)
                         .join('svg:image')
+                        // .transition()
                         .attr("xlink:href", (d,i) => icon_names[i])
                         .attr("width", imageWidth)
                         .attr("height", imageWidth)
@@ -225,20 +230,27 @@ var filters = d3.select("body")
                             return timeScale(d.date_estimate) + 40
                         })
                         .attr("y",svgHeight/2)
+                        
                 }
                 else {
                     var timeline = svg.selectAll("image")
                         .data(data)
                         .join('svg:image')
                         .attr("xlink:href", (d,i) => icon_names[i])
-                        .attr("width", imageWidth)
-                        .attr("height", imageWidth)
+                        .attr("height", obj.yHeight)
+                        // .transition()
+                        .attr("width", obj.yHeight)
                         .attr("x",function(d){ 
-                            return timeScale(d.date_estimate) + 40
+                            console.log('obj : ', obj)
+                            return timeScale(d.date_estimate) + yHeight
                         })
                         .attr("y",(d) => svgHeight - (obj[d[filter]]) - (imageWidth))
+
+                        
                 }
-                // HOVER EFFECTS
+
+
+                // HOVER EFFECTS - show preview boxes!
                     timeline.on('mouseover', function(e,d){
                         let moveRight
                         if (d.date_estimate < 0) {
@@ -250,7 +262,7 @@ var filters = d3.select("body")
                         .attr("width", 350)
                         .attr("height", 500)
                         .attr("x",filter == "none" ? timeScale(d.date_estimate) + 30 : timeScale(d.date_estimate) + moveRight)
-                        .attr("y",filter == "none" ? svgHeight/2 + (imageWidth) : svgHeight - (obj[d[filter]]) - (imageWidth) - 8)
+                        .attr("y",filter == "none" ? svgHeight/2 + (imageWidth) : svgHeight - (obj[d[filter]]) - (imageWidth) - 8) // HEYA
                         .append("xhtml:body")
                             .style("font", "12px 'Helvetica Neue'")
                             .style("padding","3px")
@@ -303,10 +315,20 @@ var filters = d3.select("body")
                     .attr('x',20)
                     .attr('y',(d)=>svgHeight - (obj[d[filter]]) - (imageWidth/2))
                     .attr('class','row_label')
+                    // .attr('fill',"#a8241b")
 
-                
+                // dark red vertical line that sepearts BCE to CE
+                svg.append("line")
+                .attr("x1",function(d){return timeScale(150)})
+                .attr("y1",0)
+                .attr("x2",function(d){return timeScale(150)})
+                .attr("y2",900)
+                .attr("stroke","#a8241b") // dark red
+                .attr("stroke-width","2")
+                .attr("stroke-dasharray","0 6")
+                .attr("stroke-linecap","round")
             }
-            updateYLabel("none")
+            updateYLabel("none") // HEYA; change this!
 
             // // COLUMN LABELS (TIME)
             svg.selectAll(".time_label")
@@ -315,18 +337,20 @@ var filters = d3.select("body")
                 .text((d,i) => years_array[i])
                 .attr('x',(d,i) => timeScale(years_array[i]) + 40)
                 .attr('y',svgHeight + 40)
+                .attr('fill',"#a8241b")
             
-            // white vertical line
-            svg.append("line")
-            .attr("x1",function(d){return timeScale(150)})
-            .attr("y1",0)
-            .attr("x2",function(d){return timeScale(150)})
-            .attr("y2",900)
-            .attr("stroke","#c98a4f")
-            .attr("stroke-width","2")
-            .attr("stroke-dasharray","0 6")
-            .attr("stroke-linecap","round")
 
+
+            svg.append("text")
+                .attr("x",timeScale(210))
+                .attr("y",30)
+                .text('CE')
+                .style('fill',"#a8241b")
+            svg.append("text")
+                .attr("x",timeScale(-20))
+                .attr("y",30)
+                .text('BCE')
+                .style('fill',"#a8241b")
         })
 
             

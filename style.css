@@ -2,6 +2,7 @@ body{
     background-color: #f2f7f6; 
     font-family: "Playfair", serif;
     /* padding: 0 30px; */
+    
 }
 #mainDiv {
     padding-left: 30px;
@@ -9,6 +10,10 @@ body{
 svg {
     /* padding-left: 30px; */
 }
+img {
+    transition: all 2s ease-out;
+}
+
 h1{
     color:  #839a95;
     /* padding-left: 30px; */
