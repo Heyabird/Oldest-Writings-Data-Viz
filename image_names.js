@@ -3,6 +3,7 @@
 var image_names = [
     "assets/1_Kish_Tablet.png",
     "assets/2_Narmer_Palette.jpeg",
+    "assets/Instructions_of_Shurrupak.jpg",
     "assets/4_Diary_of_Merer.jpeg",
     "assets/3_Palermo_Stone.png",
     "assets/5_Istanbul_2461.jpeg",
@@ -23,6 +24,7 @@ var image_names = [
     "assets/Vindolanda_Tablet.jpg",
     "assets/Svingerud_Runestone.jpg",
     "assets/Pi_Yu_Jing.jpg",
+    "assets/Bath_Curse_Tablet.jpg",
     "assets/Diamond_Sutra_from_Tang_dynasty.jpg",
     "assets/Missal_of_Silos.jpg",
     "assets/Birch_Bark_Letter_No_202.jpg",
@@ -33,6 +35,7 @@ var image_names = [
 var icon_names = [
     "icons/1_Kish_Tablet.png",
     "icons/2_Narmer_Palette.jpeg",
+    "icons/Instructions_of_Shurrupak.jpg",
     "icons/4_Diary_of_Merer.jpeg",
     "icons/3_Palermo_Stone.jpeg",
     "icons/5_Istanbul_2461.jpeg",
@@ -53,6 +56,7 @@ var icon_names = [
     "icons/Vindolanda_Tablet.jpg",
     "icons/Svingerud_Runestone.jpg",
     "icons/Pi_Yu_Jing.jpg",
+    "icons/Bath_Curse_Tablet.jpg",
     "icons/Diamond_Sutra_from_Tang_dynasty.jpg",
     "icons/Missal_of_Silos.jpg",
     "icons/Birch_Bark_Letter_No_202.jpg",

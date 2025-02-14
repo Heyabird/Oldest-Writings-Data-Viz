@@ -57,8 +57,6 @@ var filters = d3.select("body")
     
         
         d3.csv("./early_writings.csv").then(function(data){
-            
-            
             var yFilterColumns = ["empire_or_republic","found_region_modern_large",
             // "found_region_modern",
             // "current_country",
@@ -78,9 +76,10 @@ var filters = d3.select("body")
                 .data(yFilterColumns)
                 .join("button")
                 .text(d => d)
+                .attr('class','filter-button')
                 .on("click", function(e,col) {
 
-                    d3.selectAll("button")
+                    d3.selectAll(".filter-button")
                     .style("background-color", "#cccbcb")
                     console.log(col)
                     
@@ -95,12 +94,13 @@ var filters = d3.select("body")
             d3.select("body")
                 .append("button")
                 .attr('id',"noneButton")
+                .attr('class','filter-button')
                 .data(["none"])
                 .join("button")
                 .text("no filter")
                 .style("background-color", "#c98a4f")
                 .on("click", function(e,col) {
-                    d3.selectAll("button")
+                    d3.selectAll(".filter-button")
                     .style("background-color", "#cccbcb")
                     
                     updateYLabel(`${col}`)
@@ -305,7 +305,7 @@ var filters = d3.select("body")
                             .attr("class", "description")
                             .style("opacity", 1)
                             .html(
-                                `<div class='modal-content'><span class='close' onclick='closeModal()'>&times;</span><div class='flex-container'><div class='modal-img-container'><img class='modal-image' src='${image_names[data.indexOf(d)]}' height='400'/></div> <p class="modal-text"> ${d.name} <br/> ${d.date} <br/>  ${d.empire_or_republic} <br/> ${d.period} <br/> ${d.found_region_origin} <br/><br/> ${d.description} <br/></p></div></div>`
+                                `<div class='modal-content'><span class='close' onclick='closeModal()'>&times;</span><div class='flex-container'><div class='modal-img-container'><img class='modal-image' src='${image_names[data.indexOf(d)]}' height='400'/></div> <p class="modal-text"><b>${d.name}</b><br/> ${d.date} <br/><br/>Ruling state: ${d.empire_or_republic} <br/> ${d.period} <br/> Found in: ${d.found_region_origin}<br/> Currently in: ${d.current_city}, ${d.current_country}<br/><br/>Script type: ${d.script_type}<br/>Reading direction: ${d.script_direction}<br/><br/>Distance between origin and current location: ${d.distance_from_origin_km} km<br/><br/> ${d.description} <br/></p></div></div>`
                                 )
                             .style("left", (d.x + 50 + "px"))
                             .style("top", (d.y - 50 +"px"))
@@ -370,8 +370,6 @@ var filters = d3.select("body")
                 .attr('y',svgHeight + 40)
                 .attr('fill',"#a8241b")
             
-
-
             svg.append("text")
                 .attr("x",timeScale(210))
                 .attr("y",30)
