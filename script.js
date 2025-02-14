@@ -66,6 +66,10 @@ var filters = d3.select("body")
             // "none"
         ]
 
+        // d3.select("body")
+        //     .append("span")
+        //     .text("Filters: ")
+
             d3.select("body")
                 .selectAll("button")
                 .data(yFilterColumns)
@@ -90,7 +94,7 @@ var filters = d3.select("body")
                 .attr('id',"noneButton")
                 .data(["none"])
                 .join("button")
-                .text("none")
+                .text("no filter")
                 .style("background-color", "#c98a4f")
                 .on("click", function(e,col) {
                     d3.selectAll("button")
@@ -318,7 +322,7 @@ var filters = d3.select("body")
             .attr("y1",0)
             .attr("x2",function(d){return timeScale(150)})
             .attr("y2",900)
-            .attr("stroke","white")
+            .attr("stroke","#c98a4f")
             .attr("stroke-width","2")
             .attr("stroke-dasharray","0 6")
             .attr("stroke-linecap","round")

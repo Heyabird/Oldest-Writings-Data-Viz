@@ -32,7 +32,7 @@ button {
     margin: 0 10px 10px 0;
     background-color: #cccbcb;
     border: none;
-    padding: 6px;
+    padding: 6px 9px;
     cursor: pointer;
     border-radius: 3px;
 }
