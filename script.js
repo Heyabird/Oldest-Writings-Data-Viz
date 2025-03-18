@@ -57,10 +57,11 @@ var filters = d3.select("body")
     
         
         d3.csv("./early_writings.csv").then(function(data){
-            var yFilterColumns = ["empire_or_republic","found_region_modern_large",
+            var yFilterColumns = ["empire_or_republic",
+            "found_region_modern_large",
             // "found_region_modern",
             // "current_country",
-            "distance_from_origin_km",
+            // "distance_from_origin_km",
                 "writing_material",
                 "media_material",
                 "form",
