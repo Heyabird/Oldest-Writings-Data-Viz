@@ -16,6 +16,7 @@ var image_names = [
     "assets/9_Bronze_Fāng_Zūn_Ritual_Wine_Container.png",
     "assets/Dipylon_Inscription.JPG",
     "assets/Edicts_of_Ashoka.jpg",
+    "assets/Lead_Piece_from_Pujol.png",
     "assets/Glyph_Block_8_from_San_Bartolo.jpeg",
     "assets/Mawangdui_Silk_Text_Tao_Te_Ching.jpeg",
     "assets/Rosetta_Stone.jpeg",
@@ -28,6 +29,7 @@ var image_names = [
     "assets/Birmingham_Quran_manuscript.jpg",
     "assets/Diamond_Sutra_from_Tang_dynasty.jpg",
     "assets/Missal_of_Silos.jpg",
+    "assets/Dresden_Codex.png",
     "assets/Birch_Bark_Letter_No_202.jpg",
     "assets/Jikji_pages.jpg",
     "assets/Gutenberg_Bible.jpg"
@@ -49,6 +51,7 @@ var icon_names = [
     "icons/9_Bronze_Fāng_Zūn_Ritual_Wine_Container.jpeg",
     "icons/Dipylon_Inscription.JPG",
     "icons/Edicts_of_Ashoka.jpg",
+    "icons/Lead_Piece_from_Pujol.png",
     "icons/Glyph_Block_8_from_San_Bartolo.jpeg",
     "icons/Mawangdui_Silk_Text_Tao_Te_Ching.jpeg",
     "icons/Rosetta_Stone.jpeg",
@@ -61,6 +64,7 @@ var icon_names = [
     "icons/Birmingham_Quran_manuscript.jpg",
     "icons/Diamond_Sutra_from_Tang_dynasty.jpg",
     "icons/Missal_of_Silos.jpg",
+    "icons/Dresden_Codex.png",
     "icons/Birch_Bark_Letter_No_202.jpg",
     "icons/Jikji_pages.jpg",
     "icons/Gutenberg_Bible.jpg"

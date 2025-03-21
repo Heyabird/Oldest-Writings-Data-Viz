@@ -35,6 +35,8 @@ var span = document.getElementsByClassName("close")[0];
 // }
 
 var info = "<div id='info-box'><b>What defines a writing?</b><br/><br/>Writing systems typically satisfy three criteria. <br/><br/>First, the writing must have some purpose or meaning to it, and a point must be communicated by the text. <br/>Second, writing systems make use of specific symbols which may be recorded on some writing medium.<br/>Third, the symbols used in writing generally correspond to elements of spoken language. In general, systems of symbolic communication like signage, painting, maps, and mathematical notation are distinguished from writing systems, which require knowledge of an associated language to read a text.<br/><br/><br/><b>The origins of writing</b><br/><br/>Before the 20th century, most scholarly theories of the origins of writing involved some form of monogenesis, the assumption that writing had been invented only once as cuneiform in ancient Sumer, and spread across the world from there via cultural diffusion. According to these theories, writing was such a particular technology that exposure through activities like trade was a much more likely means of acquisition than independent reinvention. Specifically, many theories were dependent on a literal account of the Book of Genesis, including the emphases it placed on Mesopotamia.<br/><br/>Over time, greater awareness of the systems of pre-Columbian Mesoamerica conclusively established that writing had been independently invented multiple times. Four independent inventions of writing are most commonly recognized in <span class='underline'>Mesopotamia (c. 3400–3100 BC)</span>, <span class='underline'>Egypt (c. 3250 BC)</span>, <span class='underline'>China (before c. 1250 BC)</span>, and <span class='underline'>Mesoamerica (before c. 1 AD)</span>.<br/><br/>Source: https://en.wikipedia.org/wiki/History_of_writing</div>"
+var dataset_info = "<div id='info-box'><b>Where did you get the data?</b><br/><br/>Writing systems typically satisfy three criteria. <br/><br/>First, the writing must have some purpose or meaning to it, and a point must be communicated by the text. <br/>Second, writing systems make use of specific symbols which may be recorded on some writing medium.<br/>Third, the symbols used in writing generally correspond to elements of spoken language. In general, systems of symbolic communication like signage, painting, maps, and mathematical notation are distinguished from writing systems, which require knowledge of an associated language to read a text.<br/><br/><br/><b>The origins of writing</b><br/><br/>Before the 20th century, most scholarly theories of the origins of writing involved some form of monogenesis, the assumption that writing had been invented only once as cuneiform in ancient Sumer, and spread across the world from there via cultural diffusion. According to these theories, writing was such a particular technology that exposure through activities like trade was a much more likely means of acquisition than independent reinvention. Specifically, many theories were dependent on a literal account of the Book of Genesis, including the emphases it placed on Mesopotamia.<br/><br/>Over time, greater awareness of the systems of pre-Columbian Mesoamerica conclusively established that writing had been independently invented multiple times. Four independent inventions of writing are most commonly recognized in <span class='underline'>Mesopotamia (c. 3400–3100 BC)</span>, <span class='underline'>Egypt (c. 3250 BC)</span>, <span class='underline'>China (before c. 1250 BC)</span>, and <span class='underline'>Mesoamerica (before c. 1 AD)</span>.<br/><br/>Source: https://en.wikipedia.org/wiki/History_of_writing</div>"
+
 
 var closeModal = function() {
     console.log("HELLO")
@@ -45,8 +47,12 @@ var closeModal = function() {
 }
 
 
+// web version
+// const timelineWidth = 1400
 
-const timelineWidth = 1400
+// igloo version
+const timelineWidth = 5400
+
 var svgHeight = 670
 var imageWidth = 60
 
@@ -54,10 +60,9 @@ var imageWidth = 60
 var filters = d3.select("body")
     .append("div")
     .attr("id", "filters")
-    
         
         d3.csv("./early_writings.csv").then(function(data){
-            var yFilterColumns = ["empire_or_republic",
+            var yFilterColumns = ["empire_or_culture",
             "found_region_modern_large",
             // "found_region_modern",
             // "current_country",
@@ -115,7 +120,7 @@ var filters = d3.select("body")
                     .append("button")
                     .attr('id',"infoButton")
                     .data(info)
-                    .text("info")
+                    .text("on writing")
                     .style("background-color", "white")
                     // .style("stroke", "1px black")
                     // .style("stroke", "1px")
@@ -142,6 +147,37 @@ var filters = d3.select("body")
                         svg.selectAll("foreignObject").remove()
                     })
 
+                d3.select("body")
+                    .append("button")
+                    .attr('id',"datasetInfoButton")
+                    .data(dataset_info)
+                    .text("on this project")
+                    .style("background-color", "gray")
+                    // .style("stroke", "1px black")
+                    // .style("stroke", "1px")
+                    .style("position","fixed")
+                    .style("right","100px")
+                    .style("text-decoration","underline")
+                    .on("mouseover", function(e,col) {
+                        svg.append("foreignObject")
+                        .style('pointer-events','none')
+                        .attr("width", 800)
+                        .attr("height", 440)
+                        .attr("x",timelineWidth - 800)
+                        .attr("y",0) // HEYA
+                        .append("xhtml:div")
+                            .style("font", "12px 'Helvetica Neue'")
+                            .style("padding","13px")
+                            .style("background-color","white")
+                            .style("height","800px")
+                            .style("stroke","black")
+                            // .style("width","800px")
+                            .html(`${dataset_info}`)
+                    })
+                    .on("mouseout", function(e,col) {
+                        svg.selectAll("foreignObject").remove()
+                    })
+
                             
             var svg = d3.select("body").append("svg")
             .attr("width",timelineWidth)
@@ -157,7 +193,7 @@ var filters = d3.select("body")
 
 
             let materialToY = createFilterObject("media_material")
-            let empireToY = createFilterObject("empire_or_republic")
+            let empireToY = createFilterObject("empire_or_culture")
             let scriptToY = createFilterObject("script_type")
             let currentCountryToY = createFilterObject("current_country")
             let distanceFromOriginToY = createFilterObject("distance_from_origin_km",true)
@@ -212,7 +248,7 @@ var filters = d3.select("body")
 
             const rowNameToObject = {
                 'media_material': materialToY,
-                'empire_or_republic': empireToY,
+                'empire_or_culture': empireToY,
                 'script_type': scriptToY,
                 'current_country': currentCountryToY,
                 'distance_from_origin_km': distanceFromOriginToY,
@@ -306,7 +342,7 @@ var filters = d3.select("body")
                             .attr("class", "description")
                             .style("opacity", 1)
                             .html(
-                                `<div class='modal-content'><span class='close' onclick='closeModal()'>&times;</span><div class='flex-container'><div class='modal-img-container'><img class='modal-image' src='${image_names[data.indexOf(d)]}' height='400'/></div> <p class="modal-text"><b>${d.name}</b><br/> ${d.date} <br/><br/>Ruling state: ${d.empire_or_republic} <br/> ${d.period} <br/> Found in: ${d.found_region_origin}<br/> Currently in: ${d.current_city}, ${d.current_country}<br/><br/>Script type: ${d.script_type}<br/>Reading direction: ${d.script_direction}<br/><br/>Distance between origin and current location: ${d.distance_from_origin_km} km<br/><br/> ${d.description} <br/></p></div></div>`
+                                `<div class='modal-content'><span class='close' onclick='closeModal()'>&times;</span><div class='flex-container'><div class='modal-img-container'><img class='modal-image' src='${image_names[data.indexOf(d)]}' height='400'/></div> <p class="modal-text"><b>${d.name}</b><br/> ${d.date} <br/><br/>Ruling state: ${d.empire_or_culture} <br/> ${d.period} <br/> Found in: ${d.found_region_origin}<br/> Currently in: ${d.current_city}, ${d.current_country}<br/><br/>Script type: ${d.script_type}<br/>Reading direction: ${d.script_direction}<br/><br/>Distance between origin and current location: ${d.distance_from_origin_km} km<br/><br/> ${d.description} <br/></p></div></div>`
                                 )
                             .style("left", (d.x + 50 + "px"))
                             .style("top", (d.y - 50 +"px"))
@@ -321,7 +357,7 @@ var filters = d3.select("body")
                         // .attr("y",svgHeight - (obj[d[filter]]) - (imageWidth))
                         // .append("xhtml:body")
                         //     .style("font", "14px 'Helvetica Neue'")
-                        //     .html(`<b>${d.name}</b> <br/> ${d.date} <br/> ${d.empire_or_republic} <br/> ${d.media_material2}`)
+                        //     .html(`<b>${d.name}</b> <br/> ${d.date} <br/> ${d.empire_or_culture} <br/> ${d.media_material2}`)
 
                         d3.select("span")
                             .on("click",function(e,d){
